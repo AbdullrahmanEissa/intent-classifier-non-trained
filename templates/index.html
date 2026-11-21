@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intent Classification API</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+        }
+        h2 { margin-top: 0; color: #111827; }
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        button:hover { background-color: #1d4ed8; }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            display: none;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: white;
+            background-color: #16a34a;
+        }
+        .badge.complaint { background-color: #dc2626; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Intent Classifier</h2>
+    <input type="text" id="textInput" placeholder="Try 'hello' or 'cancel subscription'..." onkeypress="if(event.key==='Enter') predictIntent()">
+    <button onclick="predictIntent()">Classify Intent</button>
+
+    <div class="result" id="resultBox">
+        <p><strong>Intent:</strong> <span id="intentBadge" class="badge"></span></p>
+        <p><strong>Confidence:</strong> <span id="confidenceVal"></span>%</p>
+    </div>
+</div>
+
+<script>
+    async function predictIntent() {
+        const text = document.getElementById("textInput").value;
+        if (!text.trim()) return;
+
+        const response = await fetch("/predict", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: text })
+        });
+
+        const data = await response.json();
+        const badge = document.getElementById("intentBadge");
+
+        badge.textContent = data.intent;
+        badge.className = "badge " + (data.intent === "complaint" ? "complaint" : "");
+        document.getElementById("confidenceVal").textContent = data.confidence;
+        document.getElementById("resultBox").style.display = "block";
+    }
+</script>
+
+</body>
+</html>
