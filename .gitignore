@@ -5,3 +5,5 @@ mlruns/
 .env
 venv/
 .venv/
+/dataset.csv
+/intent_model.pkl

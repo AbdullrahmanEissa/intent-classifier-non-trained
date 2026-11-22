@@ -1,0 +1,5 @@
+outs:
+- md5: b372c20b7582d43102f0995169d483c1
+  size: 36300
+  hash: md5
+  path: intent_model.pkl
